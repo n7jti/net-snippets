@@ -5,6 +5,11 @@
 #include <cstdlib>
 #include <iostream>
 
+namespace {
+constexpr int kDefaultPort = 7000;
+constexpr int kEchoBufferSize = 1024;
+}
+
 static void print_usage() {
     std::wcout << L"Usage: echo-server.exe [port]\n";
     std::wcout << L"Starts a simple TCP echo server bound to all interfaces.\n";
@@ -18,7 +23,7 @@ int wmain() {
         return 1;
     }
 
-    int port = 7000;
+    int port = kDefaultPort;
     if (argc > 1) {
         if (_wcsicmp(argv[1], L"-h") == 0 || _wcsicmp(argv[1], L"--help") == 0 || _wcsicmp(argv[1], L"/?") == 0) {
             print_usage();
@@ -99,7 +104,7 @@ int wmain() {
 
         std::cout << "Client connected.\n";
 
-        char buffer[1024];
+        char buffer[kEchoBufferSize];
         int received = 0;
         while ((received = recv(client, buffer, sizeof(buffer), 0)) > 0) {
             int sent_total = 0;
