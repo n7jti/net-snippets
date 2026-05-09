@@ -9,10 +9,5 @@ endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
-add_executable(interface-enum src/interface_enum.c)
-target_compile_definitions(interface-enum PRIVATE WIN32_LEAN_AND_MEAN UNICODE _UNICODE _CRT_SECURE_NO_WARNINGS)
-target_link_libraries(interface-enum PRIVATE iphlpapi ws2_32 shell32)
-
-add_executable(echo-server src/echo_server.cpp)
-target_compile_definitions(echo-server PRIVATE WIN32_LEAN_AND_MEAN UNICODE _UNICODE _CRT_SECURE_NO_WARNINGS)
-target_link_libraries(echo-server PRIVATE ws2_32 shell32)
+add_subdirectory(src/interface-enum)
+add_subdirectory(src/echo-server)

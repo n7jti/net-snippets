@@ -2,6 +2,13 @@
 
 Windows networking snippets built as small standalone console executables.
 
+## Source layout
+
+Each sample lives in its own subdirectory under `src/` with its own `CMakeLists.txt` so new executables can be added independently.
+
+- `src/interface-enum/`
+- `src/echo-server/`
+
 ## Included executables
 
 - `interface-enum.exe` (C): Enumerates network interfaces and prints MAC address, all unicast IP addresses, and whether media is attached.
