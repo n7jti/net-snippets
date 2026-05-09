@@ -141,9 +141,24 @@ int wmain() {
 
         std::cout << "Client connected.\n";
 
+        DWORD recv_timeout_ms = 1000;
+        setsockopt(client, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char*>(&recv_timeout_ms), sizeof(recv_timeout_ms));
+
         char buffer[kEchoBufferSizeBytes];
-        int received = 0;
-        while ((received = recv(client, buffer, sizeof(buffer), 0)) > 0) {
+        while (g_keep_running.load()) {
+            int received = recv(client, buffer, sizeof(buffer), 0);
+            if (received == 0) {
+                break;
+            }
+            if (received < 0) {
+                int recv_error = WSAGetLastError();
+                if (recv_error == WSAETIMEDOUT) {
+                    continue;
+                }
+                std::cerr << "recv failed.\n";
+                break;
+            }
+
             int sent_total = 0;
             while (sent_total < received) {
                 int sent = send(client, buffer + sent_total, received - sent_total, 0);
