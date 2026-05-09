@@ -142,7 +142,11 @@ int wmain() {
         std::cout << "Client connected.\n";
 
         DWORD recv_timeout_ms = 1000;
-        setsockopt(client, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char*>(&recv_timeout_ms), sizeof(recv_timeout_ms));
+        if (setsockopt(client, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char*>(&recv_timeout_ms), sizeof(recv_timeout_ms)) == SOCKET_ERROR) {
+            std::cerr << "setsockopt failed.\n";
+            closesocket(client);
+            continue;
+        }
 
         char buffer[kEchoBufferSizeBytes];
         while (g_keep_running.load()) {

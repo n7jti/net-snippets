@@ -84,7 +84,7 @@ int wmain(void) {
                 char ip_address_string[NI_MAXHOST] = {0};
                 int rc = getnameinfo(
                     ua->Address.lpSockaddr,
-                    (socklen_t)ua->Address.iSockaddrLength,
+                    (int)ua->Address.iSockaddrLength,
                     ip_address_string,
                     sizeof(ip_address_string),
                     NULL,
