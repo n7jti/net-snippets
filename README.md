@@ -17,4 +17,4 @@ Windows networking snippets built as small standalone console executables.
 ## Command usage
 
 - `interface-enum.exe`
-- `echo-server.exe [port]` (default port: `7000`)
+- `echo-server.exe [port]` (default port: `7000`, stop with `Ctrl+C`)

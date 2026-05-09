@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-enum { INITIAL_ADAPTER_BUFFER_SIZE = 15 * 1024 };
+enum { INITIAL_ADAPTER_BUFFER_SIZE_BYTES = 15 * 1024 };
 
 static void print_usage(void) {
     wprintf(L"Usage: interface-enum.exe\n");
@@ -42,7 +42,7 @@ int wmain(void) {
         return 0;
     }
 
-    ULONG buffer_size = INITIAL_ADAPTER_BUFFER_SIZE;
+    ULONG buffer_size = INITIAL_ADAPTER_BUFFER_SIZE_BYTES;
     IP_ADAPTER_ADDRESSES* adapters = (IP_ADAPTER_ADDRESSES*)malloc(buffer_size);
     if (adapters == NULL) {
         fwprintf(stderr, L"Memory allocation failed.\n");

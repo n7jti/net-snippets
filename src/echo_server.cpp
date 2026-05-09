@@ -3,11 +3,22 @@
 #include <shellapi.h>
 #include <ws2tcpip.h>
 #include <cstdlib>
+#include <atomic>
 #include <iostream>
 
 namespace {
 constexpr int kDefaultPort = 7000;
-constexpr int kEchoBufferSize = 1024;
+constexpr int kEchoBufferSizeBytes = 1024;
+std::atomic_bool g_keep_running = true;
+
+BOOL WINAPI on_console_ctrl(DWORD control_type) {
+    if (control_type == CTRL_C_EVENT || control_type == CTRL_BREAK_EVENT || control_type == CTRL_CLOSE_EVENT) {
+        g_keep_running = false;
+        return TRUE;
+    }
+
+    return FALSE;
+}
 }
 
 static void print_usage() {
@@ -94,8 +105,34 @@ int wmain() {
     }
 
     std::cout << "Echo server listening on port " << port << "\n";
+    std::cout << "Press Ctrl+C to stop.\n";
 
-    while (true) {
+    if (!SetConsoleCtrlHandler(on_console_ctrl, TRUE)) {
+        std::cerr << "SetConsoleCtrlHandler failed.\n";
+        closesocket(listen_socket);
+        WSACleanup();
+        LocalFree(argv);
+        return 1;
+    }
+
+    while (g_keep_running.load()) {
+        fd_set read_fds;
+        FD_ZERO(&read_fds);
+        FD_SET(listen_socket, &read_fds);
+
+        timeval timeout;
+        timeout.tv_sec = 1;
+        timeout.tv_usec = 0;
+
+        int ready = select(0, &read_fds, nullptr, nullptr, &timeout);
+        if (ready == SOCKET_ERROR) {
+            std::cerr << "select failed.\n";
+            break;
+        }
+        if (ready == 0) {
+            continue;
+        }
+
         SOCKET client = accept(listen_socket, nullptr, nullptr);
         if (client == INVALID_SOCKET) {
             std::cerr << "accept failed.\n";
@@ -104,7 +141,7 @@ int wmain() {
 
         std::cout << "Client connected.\n";
 
-        char buffer[kEchoBufferSize];
+        char buffer[kEchoBufferSizeBytes];
         int received = 0;
         while ((received = recv(client, buffer, sizeof(buffer), 0)) > 0) {
             int sent_total = 0;
@@ -125,6 +162,7 @@ int wmain() {
         std::cout << "Client disconnected.\n";
     }
 
+    SetConsoleCtrlHandler(on_console_ctrl, FALSE);
     closesocket(listen_socket);
     WSACleanup();
     LocalFree(argv);
