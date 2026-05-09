@@ -65,11 +65,11 @@ int wmain() {
     hints.ai_protocol = IPPROTO_TCP;
     hints.ai_flags = AI_PASSIVE;
 
-    char port_text[16] = {0};
-    _snprintf_s(port_text, sizeof(port_text), _TRUNCATE, "%d", port);
+    char port_string[16] = {0};
+    _snprintf_s(port_string, sizeof(port_string), _TRUNCATE, "%d", port);
 
     addrinfo* bind_info = nullptr;
-    if (getaddrinfo(nullptr, port_text, &hints, &bind_info) != 0) {
+    if (getaddrinfo(nullptr, port_string, &hints, &bind_info) != 0) {
         std::cerr << "getaddrinfo failed.\n";
         WSACleanup();
         LocalFree(argv);

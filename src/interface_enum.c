@@ -81,18 +81,18 @@ int wmain(void) {
         } else {
             wprintf(L"  IP Addresses:\n");
             for (IP_ADAPTER_UNICAST_ADDRESS* ua = adapter->FirstUnicastAddress; ua != NULL; ua = ua->Next) {
-                char ip_text[NI_MAXHOST] = {0};
+                char ip_address_string[NI_MAXHOST] = {0};
                 int rc = getnameinfo(
                     ua->Address.lpSockaddr,
                     (socklen_t)ua->Address.iSockaddrLength,
-                    ip_text,
-                    sizeof(ip_text),
+                    ip_address_string,
+                    sizeof(ip_address_string),
                     NULL,
                     0,
                     NI_NUMERICHOST);
 
                 if (rc == 0) {
-                    wprintf(L"    - %S\n", ip_text);
+                    wprintf(L"    - %S\n", ip_address_string);
                 }
             }
         }
