@@ -46,6 +46,7 @@ int parse_command_line(command_options_t* options, LPWSTR** argv_out) {
     options->port = kDefaultPort;
 
     if (argc > 2) {
+        std::cerr << "Too many arguments. Use echo-server.exe [port].\n";
         LocalFree(argv);
         return ERROR_BAD_ARGUMENTS;
     }
@@ -57,6 +58,7 @@ int parse_command_line(command_options_t* options, LPWSTR** argv_out) {
             wchar_t* end = nullptr;
             long parsed = wcstol(argv[1], &end, 10);
             if (end == argv[1] || *end != L'\0' || parsed < 1 || parsed > 65535) {
+                std::cerr << "Invalid port. Use a number from 1 to 65535.\n";
                 LocalFree(argv);
                 return ERROR_BAD_ARGUMENTS;
             }

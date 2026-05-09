@@ -32,7 +32,7 @@ static void print_mac_address(const BYTE* address, ULONG length) {
     }
 }
 
-static DWORD parse_command_line(command_options_t* options, int* argc_out, LPWSTR** argv_out) {
+static DWORD parse_command_line(command_options_t* options, LPWSTR** argv_out) {
     int argc = 0;
     LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
     if (argv == NULL) {
@@ -49,7 +49,6 @@ static DWORD parse_command_line(command_options_t* options, int* argc_out, LPWST
         }
     }
 
-    *argc_out = argc;
     *argv_out = argv;
     return ERROR_SUCCESS;
 }
@@ -128,16 +127,13 @@ static DWORD run_interface_enumeration(void) {
 
 int wmain(void) {
     command_options_t options;
-    int argc = 0;
     LPWSTR* argv = NULL;
 
-    DWORD parse_result = parse_command_line(&options, &argc, &argv);
+    DWORD parse_result = parse_command_line(&options, &argv);
     if (parse_result != ERROR_SUCCESS) {
         fwprintf(stderr, L"Command line parse failed with error %lu.\n", parse_result);
         return (int)parse_result;
     }
-
-    (void)argc;
 
     int exit_code = 0;
     if (options.show_help) {
